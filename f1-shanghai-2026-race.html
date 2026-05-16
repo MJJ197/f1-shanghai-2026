@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026 F1 中国大奖赛 - 上海国际赛车场</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+            background: #0a0e1a;
+            color: #fff;
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(90deg, #dc2626, #ef4444, #dc2626);
+            padding: 12px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 30px rgba(220, 38, 38, 0.3);
+        }
+        .f1-logo { font-size: 2.2rem; font-weight: 900; letter-spacing: 3px; }
+        .race-info { text-align: center; }
+        .race-title { font-size: 1.1rem; font-weight: 600; }
+        .race-date { font-size: 0.75rem; opacity: 0.85; }
+        .live-badge {
+            background: rgba(0,0,0,0.35);
+            padding: 8px 18px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .live-dot {
+            width: 10px; height: 10px;
+            background: #22c55e;
+            border-radius: 50%;
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse {
+            0%,100% { opacity: 1; box-shadow: 0 0 8px #22c55e; }
+            50% { opacity: 0.5; }
+        }
+        .container {
+            display: flex;
+            height: calc(100vh - 65px);
+        }
+        .sidebar {
+            width: 320px;
+            background: rgba(15, 23, 42, 0.98);
+            border-right: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            flex-direction: column;
+        }
+        .panel-header {
+            padding: 14px 18px;
+            background: linear-gradient(180deg, rgba(220,38,38,0.25), transparent);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .panel-title { font-size: 0.95rem; font-weight: 700; }
+        .driver-list { flex: 1; overflow-y: auto; padding: 10px; }
+        .driver-list::-webkit-scrollbar { width: 5px; }
+        .driver-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
+        .driver-item {
+            display: flex;
+            align-items: center;
+            padding: 7px 12px;
+            margin-bottom: 4px;
+            background: rgba(255,255,255,0.04);
+            border-radius: 6px;
+            border-left: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        .driver-item.p1 { border-left-color: #fbbf24; background: rgba(251,191,36,0.12); }
+        .driver-item.p2 { border-left-color: #d1d5db; background: rgba(209,213,219,0.1); }
+        .driver-item.p3 { border-left-color: #cd7f32; background: rgba(205,127,50,0.1); }
+        .driver-item.dnf { opacity: 0.4; border-left-color: #ef4444 !important; }
+        .pos { width: 26px; font-size: 1rem; font-weight: 800; color: #6b7280; text-align: center; }
+        .driver-item.p1 .pos, .driver-item.p2 .pos, .driver-item.p3 .pos { color: #fff; }
+        .driver-item.dnf .pos { color: #ef4444; }
+        .driver-info { flex: 1; margin-left: 10px; }
+        .driver-name { font-size: 0.78rem; font-weight: 600; }
+        .driver-team { font-size: 0.62rem; color: #9ca3af; }
+        .driver-lap { font-size: 0.7rem; color: #9ca3af; min-width: 45px; text-align: right; }
+        .stats-panel {
+            padding: 12px 15px;
+            background: rgba(0,0,0,0.3);
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .stat-row { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .stat-label { font-size: 0.62rem; color: #9ca3af; text-transform: uppercase; }
+        .stat-value { font-size: 0.85rem; font-weight: 700; color: #fbbf24; }
+        .controls {
+            padding: 12px 15px;
+            background: rgba(0,0,0,0.4);
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .ctrl-btn {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+        .btn-start { background: linear-gradient(90deg, #22c55e, #16a34a); color: white; }
+        .btn-pause { background: linear-gradient(90deg, #f59e0b, #d97706); color: white; }
+        .btn-reset { background: linear-gradient(90deg, #ef4444, #dc2626); color: white; margin-bottom: 0; }
+        .track-area {
+            flex: 1;
+            position: relative;
+            overflow: auto;
+            background: radial-gradient(ellipse at center, #0d1117, #0a0e1a);
+        }
+        .track-container {
+            min-width: 100%;
+            min-height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .track-svg {
+            width: 95%;
+            max-width: 1400px;
+            height: auto;
+        }
+        .car {
+            position: absolute;
+            width: 45px;
+            height: 18px;
+            z-index: 100;
+            transition: none;
+            filter: drop-shadow(0 3px 6px rgba(0,0,0,0.6));
+        }
+        .car-body {
+            width: 100%;
+            height: 100%;
+            border-radius: 4px 12px 4px 4px;
+            position: relative;
+            box-shadow: inset 0 2px 4px rgba(255,255,255,0.15), 0 4px 12px rgba(0,0,0,0.7);
+        }
+        .car-nose {
+            position: absolute;
+            width: 18%;
+            height: 75%;
+            top: 12%;
+            left: -4%;
+            border-radius: 50% 25% 25% 50%;
+            box-shadow: inset 0 1px 3px rgba(255,255,255,0.2);
+        }
+        .car-nose-tip {
+            position: absolute;
+            width: 40%;
+            height: 40%;
+            top: 30%;
+            left: -15%;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+        }
+        .car-cockpit {
+            position: absolute;
+            width: 38%;
+            height: 60%;
+            top: 10%;
+            left: 26%;
+            background: linear-gradient(135deg, #1e3a5f, #0f2744);
+            border-radius: 45% 45% 30% 30%;
+            border: 1.5px solid rgba(255,255,255,0.25);
+            box-shadow: inset 0 2px 5px rgba(255,255,255,0.1);
+        }
+        .car-cockpit-glass {
+            position: absolute;
+            width: 70%;
+            height: 60%;
+            top: 18%;
+            left: 15%;
+            background: linear-gradient(135deg, #475569 0%, #334155 50%, #1e293b 100%);
+            border-radius: 40% 40% 25% 25%;
+            box-shadow: inset 0 1px 3px rgba(255,255,255,0.15);
+        }
+        .car-sidepod { 
+            position: absolute; 
+            width: 50%; 
+            height: 45%; 
+            top: 48%; 
+            left: 30%; 
+            border-radius: 0 6px 3px 0;
+            box-shadow: inset -2px 0 4px rgba(255,255,255,0.1);
+        }
+        .car-sidepod-detail {
+            position: absolute;
+            width: 60%;
+            height: 30%;
+            top: 35%;
+            left: 15%;
+            border-radius: 3px;
+            background: rgba(255,255,255,0.1);
+        }
+        .car-rear { 
+            position: absolute; 
+            width: 32%; 
+            height: 70%; 
+            top: 15%; 
+            right: -16%; 
+            border-radius: 0 6px 6px 0;
+            box-shadow: inset -2px 0 5px rgba(255,255,255,0.15);
+        }
+        .car-rear-wing-endplate {
+            position: absolute;
+            width: 15%;
+            height: 100%;
+            right: 0;
+            top: 0;
+            border-radius: 0 6px 6px 0;
+            background: inherit;
+            opacity: 0.8;
+        }
+        .car-wheel {
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            background: #0f0f0f;
+            border-radius: 50%;
+            border: 2.5px solid #2a2a2a;
+            box-shadow: inset 0 0 4px rgba(255,255,255,0.05);
+        }
+        .car-wheel-front { left: 4%; bottom: -2px; }
+        .car-wheel-back { right: 14%; bottom: -2px; }
+        .car-wheel-inner {
+            position: absolute;
+            width: 7px;
+            height: 7px;
+            background: #1a1a1a;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 1.5px solid #333;
+        }
+        .car-wheel-rim {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: #444;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .car-front-wing {
+            position: absolute;
+            width: 20%;
+            height: 25%;
+            bottom: 8%;
+            left: -5%;
+            background: inherit;
+            opacity: 0.85;
+            clip-path: polygon(0% 100%, 100% 100%, 95% 0%, 5% 0%);
+        }
+        .car-front-wing-endplate {
+            position: absolute;
+            width: 25%;
+            height: 100%;
+            right: 0;
+            top: 0;
+            background: inherit;
+            opacity: 0.9;
+        }
+        .car-floor-edge {
+            position: absolute;
+            width: 100%;
+            height: 3px;
+            bottom: 0;
+            background: rgba(0,0,0,0.3);
+            border-radius: 0 0 2px 2px;
+        }
+        .car-number {
+            position: absolute;
+            font-size: 0.75rem;
+            font-weight: 900;
+            color: white;
+            text-shadow: 1.5px 1.5px 3px rgba(0,0,0,0.9);
+            top: 52%;
+            left: 58%;
+            transform: translate(-50%, -50%);
+            font-family: 'Arial Black', sans-serif;
+        }
+        .car-number-outline {
+            position: absolute;
+            font-size: 0.75rem;
+            font-weight: 900;
+            color: rgba(0,0,0,0.5);
+            top: 52%;
+            left: 58%;
+            transform: translate(-50%, -50%);
+            font-family: 'Arial Black', sans-serif;
+            filter: blur(1px);
+        }
+        /* 2026 F1真实涂装 */
+        .mercedes .car-body, .mercedes .car-rear { background: linear-gradient(180deg, #c0c0c0 0%, #a8a8a8 30%, #1a1a1a 70%, #0f0f0f 100%); }
+        .mercedes .car-nose { background: linear-gradient(180deg, #e0e0e0, #c0c0c0); }
+        .mercedes .car-sidepod { background: linear-gradient(90deg, #1a1a1a, #00d4be 30%, #00e5c7 50%, #00d4be 70%, #1a1a1a); }
+        .mercedes .car-front-wing { background: linear-gradient(180deg, #c0c0c0, #a8a8a8); }
+        .mercedes .car-cockpit { background: linear-gradient(135deg, #1e3a5f, #0f2744); }
+        .ferrari .car-body, .ferrari .car-nose, .ferrari .car-front-wing { background: linear-gradient(135deg, #ff1e1e 0%, #dc2626 40%, #b91c1c 100%); }
+        .ferrari .car-sidepod { background: linear-gradient(90deg, #dc2626 0%, #ffffff 40%, #ffffff 60%, #dc2626 100%); }
+        .ferrari .car-rear { background: linear-gradient(135deg, #dc2626, #b91c1c); }
+        .ferrari .car-cockpit { background: linear-gradient(135deg, #2d2d44, #1a1a2e); }
+        .redbull .car-body, .redbull .car-nose, .redbull .car-front-wing { background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 40%, #2563eb 70%, #1e3a5f 100%); }
+        .redbull .car-sidepod { background: linear-gradient(90deg, #1e3a5f 0%, #2563eb 20%, #ffd700 45%, #fbbf24 50%, #ffd700 55%, #2563eb 80%, #1e3a5f 100%); }
+        .redbull .car-rear { background: linear-gradient(135deg, #1e3a5f, #0f172a); }
+        .redbull .car-cockpit { background: linear-gradient(135deg, #1e3a5f, #0f2744); }
+        .mclaren .car-body, .mclaren .car-nose, .mclaren .car-front-wing { background: linear-gradient(135deg, #ff6b35 0%, #ff8700 40%, #fbbf24 70%, #ff8700 100%); }
+        .mclaren .car-sidepod { background: linear-gradient(90deg, #ff6b35 0%, #1a1a1a 40%, #1a1a1a 60%, #ff6b35 100%); }
+        .mclaren .car-rear { background: linear-gradient(135deg, #1a1a1a, #0f0f0f); }
+        .mclaren .car-cockpit { background: linear-gradient(135deg, #1e3a5f, #0f2744); }
+        .aston .car-body, .aston .car-nose, .aston .car-sidepod, .aston .car-rear, .aston .car-front-wing { background: linear-gradient(135deg, #004d40 0%, #006f62 40%, #00897b 60%, #006f62 100%); }
+        .aston .car-cockpit { background: linear-gradient(135deg, #1e3a5f, #0f2744); }
+        .alpine .car-body, .alpine .car-nose, .alpine .car-front-wing { background: linear-gradient(135deg, #0066cc 0%, #0090ff 40%, #ff69b4 70%, #0090ff 100%); }
+        .alpine .car-sidepod { background: linear-gradient(90deg, #0090ff, #0066cc 50%, #0090ff); }
+        .alpine .car-rear { background: linear-gradient(135deg, #0066cc, #004499); }
+        .alpine .car-cockpit { background: linear-gradient(135deg, #1e3a5f, #0f2744); }
+        .williams .car-body, .williams .car-nose, .williams .car-front-wing { background: linear-gradient(135deg, #005aff 0%, #3b82f6 30%, #60a5fa 50%, #ffffff 100%); }
+        .williams .car-sidepod { background: linear-gradient(90deg, #3b82f6, #60a5fa 40%, #3b82f6); }
+        .williams .car-rear { background: linear-gradient(135deg, #005aff, #003399); }
+        .williams .car-cockpit { background: linear-gradient(135deg, #1e3a5f, #0f2744); }
+        .rb .car-body, .rb .car-nose, .rb .car-front-wing { background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 30%, #e0e0e0 100%); }
+        .rb .car-sidepod { background: linear-gradient(90deg, #ffffff, #6692ff 30%, #8b5cf6 50%, #6692ff 70%, #ffffff); }
+        .rb .car-rear { background: linear-gradient(135deg, #6692ff, #2b4562); }
+        .rb .car-cockpit { background: linear-gradient(135deg, #1e3a5f, #0f2744); }
+        .haas .car-body, .haas .car-nose, .haas .car-front-wing { background: linear-gradient(135deg, #ffffff 0%, #f5f5f5 50%, #e8e8e8 100%); }
+        .haas .car-sidepod { background: linear-gradient(90deg, #f5f5f5, #333333 45%, #333333 55%, #f5f5f5); }
+        .haas .car-rear { background: linear-gradient(135deg, #dc2626, #b91c1c); }
+        .haas .car-cockpit { background: linear-gradient(135deg, #2d2d2d, #1a1a1a); }
+        .audi .car-body, .audi .car-nose, .audi .car-front-wing { background: linear-gradient(135deg, #c0c0c0 0%, #e0e0e0 40%, #c0c0c0 100%); }
+        .audi .car-sidepod { background: linear-gradient(90deg, #c0c0c0 0%, #dc2626 45%, #dc2626 55%, #c0c0c0 100%); }
+        .audi .car-rear { background: linear-gradient(135deg, #dc2626, #991b1b); }
+        .audi .car-cockpit { background: linear-gradient(135deg, #2d2d2d, #1a1a1a); }
+        .cadillac .car-body, .cadillac .car-front-wing { background: linear-gradient(90deg, #f5f5f5 0%, #e8e8e8 50%, #1a1a1a 100%); }
+        .cadillac .car-nose { background: linear-gradient(135deg, #f5f5f5, #e8e8e8); }
+        .cadillac .car-sidepod { background: linear-gradient(90deg, #e8e8e8 0%, #ffffff 50%, #1a1a1a 100%); }
+        .cadillac .car-rear { background: linear-gradient(135deg, #1a1a1a, #0f0f0f); }
+        .cadillac .car-cockpit { background: linear-gradient(135deg, #2d2d2d, #1a1a1a); }
+        .hud {
+            position: fixed;
+            top: 75px;
+            right: 15px;
+            z-index: 200;
+        }
+        .hud-box {
+            background: rgba(0,0,0,0.85);
+            padding: 10px 16px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.15);
+            text-align: center;
+            margin-bottom: 8px;
+        }
+        .hud-label { font-size: 0.6rem; color: #9ca3af; text-transform: uppercase; }
+        .hud-value { font-family: 'Courier New', monospace; font-size: 1.3rem; font-weight: 900; }
+        .hud-lap .hud-value { color: #fbbf24; }
+        .hud-time .hud-value { color: #3b82f6; }
+        .zoom-controls {
+            position: fixed;
+            top: 75px;
+            left: 340px;
+            z-index: 200;
+        }
+        .zoom-btn {
+            width: 34px;
+            height: 34px;
+            border-radius: 5px;
+            border: none;
+            background: rgba(0,0,0,0.85);
+            color: #fbbf24;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-right: 4px;
+        }
+        .zoom-btn:hover { background: rgba(0,0,0,0.95); }
+        .winner-banner {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            padding: 30px 60px;
+            border-radius: 15px;
+            text-align: center;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 10px 50px rgba(251,191,36,0.4);
+        }
+        .winner-banner.show { display: block; animation: popIn 0.5s ease-out; }
+        @keyframes popIn {
+            0% { transform: translate(-50%, -50%) scale(0); }
+            100% { transform: translate(-50%, -50%) scale(1); }
+        }
+        .winner-title { font-size: 1.5rem; font-weight: 900; color: #1a1a1a; }
+        .winner-name { font-size: 2rem; font-weight: 900; color: #fff; margin: 10px 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .winner-team { font-size: 1.2rem; color: #1a1a1a; opacity: 0.8; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="f1-logo">F1</div>
+        <div class="race-info">
+            <div class="race-title">2026 HEINEKEN F1 中国大奖赛</div>
+            <div class="race-date">上海国际赛车场 • 3月15日 2026 • 56圈</div>
+        </div>
+        <div class="live-badge">
+            <div class="live-dot"></div>
+            <span style="font-weight:700; font-size:0.8rem;">LIVE RACE</span>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="sidebar">
+            <div class="panel-header">
+                <div class="panel-title">🏁 LIVE STANDINGS</div>
+            </div>
+            <div class="driver-list" id="driverList"></div>
+            <div class="stats-panel">
+                <div class="stat-row"><span class="stat-label">LAP</span><span class="stat-value" id="lapStat">1/56</span></div>
+                <div class="stat-row"><span class="stat-label">Leader</span><span class="stat-value" id="leaderStat">ANTONELLI</span></div>
+                <div class="stat-row"><span class="stat-label">Gap</span><span class="stat-value" id="gapStat">+0.000s</span></div>
+                <div class="stat-row"><span class="stat-label">Fastest</span><span class="stat-value" id="fastestStat">--:--.---</span></div>
+            </div>
+            <div class="controls">
+                <button class="ctrl-btn btn-start" onclick="startRace()">▶ START</button>
+                <button class="ctrl-btn btn-pause" onclick="togglePause()">⏸ PAUSE</button>
+                <button class="ctrl-btn btn-reset" onclick="resetRace()">↺ RESET</button>
+            </div>
+        </div>
+
+        <div class="track-area" id="trackArea">
+            <div class="hud">
+                <div class="hud-box hud-lap"><div class="hud-label">LAP</div><div class="hud-value" id="hudLap">1</div></div>
+                <div class="hud-box hud-time"><div class="hud-label">TIME</div><div class="hud-value" id="hudTime">00:00</div></div>
+            </div>
+            <div class="zoom-controls">
+                <button class="zoom-btn" onclick="zoomIn()">+</button>
+                <button class="zoom-btn" onclick="zoomOut()">−</button>
+                <button class="zoom-btn" onclick="zoomReset()">1:1</button>
+            </div>
+            <div class="track-container" id="trackContainer">
+                <svg class="track-svg" id="trackSvg" viewBox="0 0 1100 700" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="grassGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" style="stop-color:#166534"/>
+                            <stop offset="100%" style="stop-color:#14532d"/>
+                        </linearGradient>
+                        <linearGradient id="trackGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" style="stop-color:#2a2a2a"/>
+                            <stop offset="50%" style="stop-color:#3a3a3a"/>
+                            <stop offset="100%" style="stop-color:#2a2a2a"/>
+                        </linearGradient>
+                    </defs>
+                    <rect width="1100" height="700" fill="url(#grassGrad)"/>
+                    <path d="M450 660 L550 660 L620 620 L700 620 L760 660 L920 660 L1010 580 L1050 500 L1055 400 L1030 300 L950 220 L850 185 L740 195 L590 255 L480 325 L420 410 L395 510 L420 590 L450 660" 
+                          fill="url(#trackGrad)" stroke="#4a4a4a" stroke-width="2"/>
+                    <path d="M450 660 L550 660 L620 620 L700 620 L760 660 L920 660 L1010 580 L1050 500 L1055 400 L1030 300 L950 220 L850 185 L740 195 L590 255 L480 325 L420 410 L395 510 L420 590 L450 660" 
+                          fill="none" stroke="#ffffff" stroke-width="1.5" opacity="0.5"/>
+                    <path d="M460 645 L550 645 L620 605 L700 605 L760 645 L920 645 L1010 565 L1050 490 L1055 395 L1030 300 L950 225 L850 190 L740 200 L590 255 L480 320 L425 405 L400 505 L420 580" 
+                          fill="none" stroke="#ffffff" stroke-width="1" stroke-dasharray="20 15" opacity="0.3"/>
+                    <rect x="430" y="648" width="45" height="20" fill="#dc2626"/>
+                    <rect x="430" y="648" width="45" height="6" fill="#ffffff"/>
+                    <rect x="430" y="662" width="45" height="6" fill="#ffffff"/>
+                    <circle cx="452" cy="658" r="18" fill="#dc2626"/>
+                    <circle cx="452" cy="658" r="7" fill="#ffffff"/>
+                    <text x="400" y="690" fill="#ffffff" font-size="13" font-weight="bold">START/FINISH</text>
+                    <text x="600" y="170" fill="#ffffff" font-size="11" font-weight="bold">T1-T3</text>
+                    <text x="1000" y="340" fill="#ffffff" font-size="11" font-weight="bold">T4-T7</text>
+                    <text x="850" y="155" fill="#ffffff" font-size="11" font-weight="bold">T8-T10</text>
+                    <text x="620" y="170" fill="#ffffff" font-size="11" font-weight="bold">T11-T12</text>
+                    <text x="460" y="460" fill="#ffffff" font-size="11" font-weight="bold">T13-T16</text>
+                    <rect x="760" y="640" width="160" height="14" fill="#333"/>
+                    <text x="765" y="635" fill="#ffffff" font-size="9" font-weight="bold">PIT LANE</text>
+                </svg>
+                <div id="carsContainer" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="winner-banner" id="winnerBanner">
+        <div class="winner-title">🏆 RACE WINNER</div>
+        <div class="winner-name" id="winnerName">KIMI ANTONELLI</div>
+        <div class="winner-team" id="winnerTeam">MERCEDES</div>
+    </div>
+
+    <script>
+        const drivers = [
+            { pos: 1, name: 'Kimi ANTONELLI', team: 'Mercedes', number: '12', speed: 1.0, carClass: 'mercedes', status: 'racing' },
+            { pos: 2, name: 'George RUSSELL', team: 'Mercedes', number: '63', speed: 0.97, carClass: 'mercedes', status: 'racing' },
+            { pos: 3, name: 'Lewis HAMILTON', team: 'Ferrari', number: '44', speed: 0.95, carClass: 'ferrari', status: 'racing' },
+            { pos: 4, name: 'Charles LECLERC', team: 'Ferrari', number: '16', speed: 0.94, carClass: 'ferrari', status: 'racing' },
+            { pos: 5, name: 'Oliver BEARMAN', team: 'Haas', number: '87', speed: 0.90, carClass: 'haas', status: 'racing' },
+            { pos: 6, name: 'Pierre GASLY', team: 'Alpine', number: '10', speed: 0.88, carClass: 'alpine', status: 'racing' },
+            { pos: 7, name: 'Liam LAWSON', team: 'RB', number: '30', speed: 0.86, carClass: 'rb', status: 'racing' },
+            { pos: 8, name: 'Isack HADJAR', team: 'Red Bull', number: '28', speed: 0.89, carClass: 'redbull', status: 'racing' },
+            { pos: 9, name: 'Carlos SAINZ', team: 'Williams', number: '55', speed: 0.85, carClass: 'williams', status: 'racing' },
+            { pos: 10, name: 'Franco COLAPINTO', team: 'Alpine', number: '43', speed: 0.83, carClass: 'alpine', status: 'racing' },
+            { pos: 11, name: 'Nico HULKENBERG', team: 'Audi', number: '27', speed: 0.84, carClass: 'audi', status: 'racing' },
+            { pos: 12, name: 'Arvid LINDBLAD', team: 'RB', number: '41', speed: 0.82, carClass: 'rb', status: 'racing' },
+            { pos: 13, name: 'Valtteri BOTTAS', team: 'Cadillac', number: '77', speed: 0.81, carClass: 'cadillac', status: 'racing' },
+            { pos: 14, name: 'Esteban OCON', team: 'Haas', number: '31', speed: 0.80, carClass: 'haas', status: 'racing' },
+            { pos: 15, name: 'Sergio PEREZ', team: 'Cadillac', number: '11', speed: 0.79, carClass: 'cadillac', status: 'racing' },
+            { pos: 16, name: 'Max VERSTAPPEN', team: 'Red Bull', number: '1', speed: 0.96, carClass: 'redbull', status: 'dnf' },
+            { pos: 17, name: 'Fernando ALONSO', team: 'Aston Martin', number: '14', speed: 0.87, carClass: 'aston', status: 'dnf' },
+            { pos: 18, name: 'Lance STROLL', team: 'Aston Martin', number: '18', speed: 0.85, carClass: 'aston', status: 'dnf' },
+            { pos: 19, name: 'Alex ALBON', team: 'Williams', number: '23', speed: 0.86, carClass: 'williams', status: 'dns' },
+            { pos: 20, name: 'Lando NORRIS', team: 'McLaren', number: '1', speed: 0.93, carClass: 'mclaren', status: 'dns' },
+        ];
+
+        const trackPath = [
+            { x: 452, y: 658, speed: 320 },
+            { x: 490, y: 658, speed: 315 },
+            { x: 545, y: 640, speed: 110 },
+            { x: 600, y: 620, speed: 130 },
+            { x: 660, y: 635, speed: 290 },
+            { x: 760, y: 658, speed: 340 },
+            { x: 850, y: 610, speed: 170 },
+            { x: 930, y: 550, speed: 140 },
+            { x: 990, y: 480, speed: 120 },
+            { x: 1030, y: 400, speed: 105 },
+            { x: 1040, y: 320, speed: 150 },
+            { x: 990, y: 250, speed: 185 },
+            { x: 900, y: 205, speed: 220 },
+            { x: 800, y: 190, speed: 260 },
+            { x: 700, y: 205, speed: 160 },
+            { x: 600, y: 255, speed: 95 },
+            { x: 510, y: 325, speed: 85 },
+            { x: 450, y: 400, speed: 135 },
+            { x: 420, y: 480, speed: 200 },
+            { x: 425, y: 560, speed: 280 },
+            { x: 452, y: 658, speed: 320 },
+        ];
+
+        let raceState = { running: false, paused: false, currentLap: 1, maxLaps: 56, time: 0, carProgress: [], zoom: 1.0 };
+        let cars = [];
+        let raceInterval = null;
+        let fastestLap = null;
+
+        function initRace() {
+            const container = document.getElementById('carsContainer');
+            container.innerHTML = '';
+            cars = [];
+
+            drivers.forEach((driver, idx) => {
+                const carEl = document.createElement('div');
+                carEl.className = `car ${driver.carClass}`;
+                carEl.innerHTML = `
+                    <div class="car-body">
+                        <div class="car-nose">
+                            <div class="car-nose-tip"></div>
+                        </div>
+                        <div class="car-cockpit">
+                            <div class="car-cockpit-glass"></div>
+                        </div>
+                        <div class="car-sidepod">
+                            <div class="car-sidepod-detail"></div>
+                        </div>
+                        <div class="car-rear">
+                            <div class="car-rear-wing-endplate"></div>
+                        </div>
+                        <div class="car-front-wing">
+                            <div class="car-front-wing-endplate"></div>
+                        </div>
+                        <div class="car-wheel car-wheel-front">
+                            <div class="car-wheel-inner">
+                                <div class="car-wheel-rim"></div>
+                            </div>
+                        </div>
+                        <div class="car-wheel car-wheel-back">
+                            <div class="car-wheel-inner">
+                                <div class="car-wheel-rim"></div>
+                            </div>
+                        </div>
+                        <div class="car-floor-edge"></div>
+                        <div class="car-number-outline">${driver.number}</div>
+                        <div class="car-number">${driver.number}</div>
+                    </div>
+                `;
+                container.appendChild(carEl);
+                cars.push({ element: carEl, driver: driver, progress: idx * 8, lap: 0 });
+                raceState.carProgress[idx] = idx * 8;
+            });
+
+            updateStandings();
+            updateCarPositions();
+        }
+
+        function updateCarPositions() {
+            const svg = document.getElementById('trackSvg');
+            const rect = svg.getBoundingClientRect();
+            const container = document.getElementById('trackContainer');
+            const containerRect = container.getBoundingClientRect();
+            const scaleX = rect.width / 1100;
+            const scaleY = rect.height / 700;
+            const offsetX = (containerRect.width - rect.width) / 2;
+            const offsetY = (containerRect.height - rect.height) / 2;
+
+            cars.forEach((car, idx) => {
+                if (car.driver.status === 'dns') {
+                    car.element.style.display = 'none';
+                    return;
+                }
+
+                const progress = raceState.carProgress[idx];
+                const pathIdx = Math.floor(progress % 100 / 100 * (trackPath.length - 1));
+                const nextIdx = (pathIdx + 1) % trackPath.length;
+                const t = (progress % 100 / 100 * (trackPath.length - 1)) % 1;
+
+                const p1 = trackPath[pathIdx];
+                const p2 = trackPath[nextIdx];
+
+                const x = p1.x + (p2.x - p1.x) * t;
+                const y = p1.y + (p2.y - p1.y) * t;
+                const angle = Math.atan2(p2.y - p1.y, p2.x - p1.x) * 180 / Math.PI;
+
+                car.element.style.left = `${offsetX + x * scaleX - 22}px`;
+                car.element.style.top = `${offsetY + y * scaleY - 9}px`;
+                car.element.style.transform = `rotate(${angle}deg)`;
+                car.element.style.opacity = car.driver.status === 'dnf' ? '0.3' : '1';
+            });
+        }
+
+        function updateStandings() {
+            const racing = drivers.filter(d => d.status === 'racing').map((d, i) => ({ ...d, actualPos: i + 1 }));
+            const dnf = drivers.filter(d => d.status === 'dnf');
+            const dns = drivers.filter(d => d.status === 'dns');
+
+            const sorted = [...racing].sort((a, b) => {
+                const lapA = Math.floor(raceState.carProgress[drivers.indexOf(a)] / 100);
+                const lapB = Math.floor(raceState.carProgress[drivers.indexOf(b)] / 100);
+                if (lapB !== lapA) return lapB - lapA;
+                return (raceState.carProgress[drivers.indexOf(b)] % 100) - (raceState.carProgress[drivers.indexOf(a)] % 100);
+            });
+
+            let html = '';
+            sorted.forEach((driver, idx) => {
+                const carIdx = drivers.indexOf(driver);
+                const lap = Math.floor(raceState.carProgress[carIdx] / 100) + 1;
+                const pClass = idx < 3 ? `p${idx + 1}` : '';
+                html += `
+                    <div class="driver-item ${pClass}">
+                        <div class="pos">${idx + 1}</div>
+                        <div class="driver-info">
+                            <div class="driver-name">${driver.name}</div>
+                            <div class="driver-team">${driver.team}</div>
+                        </div>
+                        <div class="driver-lap">L${Math.min(lap, raceState.maxLaps)}</div>
+                    </div>
+                `;
+            });
+
+            dnf.forEach(driver => {
+                const carIdx = drivers.indexOf(driver);
+                const lap = Math.floor(raceState.carProgress[carIdx] / 100) + 1;
+                html += `
+                    <div class="driver-item dnf">
+                        <div class="pos">DNF</div>
+                        <div class="driver-info">
+                            <div class="driver-name">${driver.name}</div>
+                            <div class="driver-team">${driver.team}</div>
+                        </div>
+                        <div class="driver-lap">L${lap}</div>
+                    </div>
+                `;
+            });
+
+            dns.forEach(driver => {
+                html += `
+                    <div class="driver-item dnf">
+                        <div class="pos">DNS</div>
+                        <div class="driver-info">
+                            <div class="driver-name">${driver.name}</div>
+                            <div class="driver-team">${driver.team}</div>
+                        </div>
+                        <div class="driver-lap">-</div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('driverList').innerHTML = html;
+        }
+
+        function updateHUD() {
+            document.getElementById('lapStat').textContent = `${raceState.currentLap}/${raceState.maxLaps}`;
+            document.getElementById('hudLap').textContent = raceState.currentLap;
+
+            const mins = Math.floor(raceState.time / 60);
+            const secs = Math.floor(raceState.time % 60).toString().padStart(2, '0');
+            document.getElementById('hudTime').textContent = `${mins}:${secs}`;
+
+            const sorted = drivers.filter(d => d.status === 'racing').map((d, i) => ({ ...d, idx: drivers.indexOf(d) }))
+                .sort((a, b) => {
+                    const lapA = Math.floor(raceState.carProgress[a.idx] / 100);
+                    const lapB = Math.floor(raceState.carProgress[b.idx] / 100);
+                    if (lapB !== lapA) return lapB - lapA;
+                    return (raceState.carProgress[b.idx] % 100) - (raceState.carProgress[a.idx] % 100);
+                });
+
+            if (sorted.length > 0) {
+                const leader = sorted[0];
+                document.getElementById('leaderStat').textContent = leader.name.split(' ')[1];
+
+                if (sorted.length > 1) {
+                    const diff = ((raceState.carProgress[sorted[0].idx] - raceState.carProgress[sorted[1].idx]) % 100) / 100 * 5.3;
+                    document.getElementById('gapStat').textContent = `+${diff.toFixed(3)}s`;
+                }
+            }
+
+            if (raceState.currentLap > 1 && !fastestLap) {
+                fastestLap = (90 + Math.random() * 5).toFixed(3);
+                document.getElementById('fastestStat').textContent = `1:${fastestLap}`;
+            }
+        }
+
+        function startRace() {
+            if (raceState.running) return;
+            raceState.running = true;
+            raceState.paused = false;
+
+            raceInterval = setInterval(() => {
+                if (!raceState.paused) {
+                    raceState.time += 0.03;
+
+                    drivers.forEach((driver, idx) => {
+                        if (driver.status !== 'racing') return;
+
+                        const progress = raceState.carProgress[idx];
+                        const pathIdx = Math.floor(progress % 100 / 100 * (trackPath.length - 1));
+                        const baseSpeed = trackPath[pathIdx].speed;
+
+                        const speedFactor = driver.speed * (baseSpeed / 300) * 0.45;
+                        raceState.carProgress[idx] += speedFactor * (0.98 + Math.random() * 0.04);
+
+                        if (raceState.carProgress[idx] >= 100) {
+                            raceState.carProgress[idx] -= 100;
+                            if (idx === 0) {
+                                raceState.currentLap++;
+                                if (raceState.currentLap > raceState.maxLaps) {
+                                    endRace();
+                                }
+                            }
+                        }
+                    });
+
+                    updateCarPositions();
+                    updateStandings();
+                    updateHUD();
+                }
+            }, 30);
+        }
+
+        function togglePause() {
+            if (!raceState.running) return;
+            raceState.paused = !raceState.paused;
+        }
+
+        function endRace() {
+            raceState.running = false;
+            clearInterval(raceInterval);
+
+            const sorted = drivers.filter(d => d.status === 'racing')
+                .map((d, i) => ({ ...d, idx: drivers.indexOf(d) }))
+                .sort((a, b) => {
+                    const lapA = Math.floor(raceState.carProgress[a.idx] / 100);
+                    const lapB = Math.floor(raceState.carProgress[b.idx] / 100);
+                    if (lapB !== lapA) return lapB - lapA;
+                    return (raceState.carProgress[b.idx] % 100) - (raceState.carProgress[a.idx] % 100);
+                });
+
+            if (sorted.length > 0) {
+                const winner = sorted[0];
+                document.getElementById('winnerName').textContent = winner.name.toUpperCase();
+                document.getElementById('winnerTeam').textContent = winner.team.toUpperCase();
+                document.getElementById('winnerBanner').classList.add('show');
+            }
+        }
+
+        function resetRace() {
+            raceState.running = false;
+            raceState.paused = false;
+            raceState.currentLap = 1;
+            raceState.time = 0;
+            fastestLap = null;
+
+            if (raceInterval) clearInterval(raceInterval);
+
+            document.getElementById('winnerBanner').classList.remove('show');
+            document.getElementById('fastestStat').textContent = '--:--.---';
+            document.getElementById('gapStat').textContent = '+0.000s';
+
+            initRace();
+        }
+
+        function zoomIn() {
+            raceState.zoom = Math.min(2.5, raceState.zoom + 0.2);
+            document.getElementById('trackSvg').style.transform = `scale(${raceState.zoom})`;
+            updateCarPositions();
+        }
+
+        function zoomOut() {
+            raceState.zoom = Math.max(0.5, raceState.zoom - 0.2);
+            document.getElementById('trackSvg').style.transform = `scale(${raceState.zoom})`;
+            updateCarPositions();
+        }
+
+        function zoomReset() {
+            raceState.zoom = 1.0;
+            document.getElementById('trackSvg').style.transform = `scale(1)`;
+            updateCarPositions();
+        }
+
+        window.addEventListener('resize', () => {
+            updateCarPositions();
+        });
+
+        initRace();
+    </script>
+</body>
+</html>
