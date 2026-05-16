@@ -136,83 +136,216 @@
             height: 18px;
             z-index: 100;
             transition: none;
+            filter: drop-shadow(0 3px 6px rgba(0,0,0,0.6));
         }
         .car-body {
             width: 100%;
             height: 100%;
             border-radius: 4px 12px 4px 4px;
             position: relative;
-            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: inset 0 2px 4px rgba(255,255,255,0.15), 0 4px 12px rgba(0,0,0,0.7);
         }
         .car-nose {
             position: absolute;
-            width: 20%;
-            height: 80%;
-            top: 10%;
-            left: -5%;
-            border-radius: 50% 30% 30% 50%;
+            width: 18%;
+            height: 75%;
+            top: 12%;
+            left: -4%;
+            border-radius: 50% 25% 25% 50%;
+            box-shadow: inset 0 1px 3px rgba(255,255,255,0.2);
+        }
+        .car-nose-tip {
+            position: absolute;
+            width: 40%;
+            height: 40%;
+            top: 30%;
+            left: -15%;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
         }
         .car-cockpit {
             position: absolute;
-            width: 35%;
-            height: 55%;
-            top: 12%;
-            left: 28%;
-            background: #1e3a5f;
-            border-radius: 50% 50% 30% 30%;
-            border: 1px solid rgba(255,255,255,0.2);
+            width: 38%;
+            height: 60%;
+            top: 10%;
+            left: 26%;
+            background: linear-gradient(135deg, #1e3a5f, #0f2744);
+            border-radius: 45% 45% 30% 30%;
+            border: 1.5px solid rgba(255,255,255,0.25);
+            box-shadow: inset 0 2px 5px rgba(255,255,255,0.1);
         }
-        .car-rear {
+        .car-cockpit-glass {
             position: absolute;
-            width: 25%;
-            height: 75%;
-            top: 12%;
-            right: -10%;
-            border-radius: 0 8px 8px 0;
+            width: 70%;
+            height: 60%;
+            top: 18%;
+            left: 15%;
+            background: linear-gradient(135deg, #475569 0%, #334155 50%, #1e293b 100%);
+            border-radius: 40% 40% 25% 25%;
+            box-shadow: inset 0 1px 3px rgba(255,255,255,0.15);
+        }
+        .car-sidepod { 
+            position: absolute; 
+            width: 50%; 
+            height: 45%; 
+            top: 48%; 
+            left: 30%; 
+            border-radius: 0 6px 3px 0;
+            box-shadow: inset -2px 0 4px rgba(255,255,255,0.1);
+        }
+        .car-sidepod-detail {
+            position: absolute;
+            width: 60%;
+            height: 30%;
+            top: 35%;
+            left: 15%;
+            border-radius: 3px;
+            background: rgba(255,255,255,0.1);
+        }
+        .car-rear { 
+            position: absolute; 
+            width: 32%; 
+            height: 70%; 
+            top: 15%; 
+            right: -16%; 
+            border-radius: 0 6px 6px 0;
+            box-shadow: inset -2px 0 5px rgba(255,255,255,0.15);
+        }
+        .car-rear-wing-endplate {
+            position: absolute;
+            width: 15%;
+            height: 100%;
+            right: 0;
+            top: 0;
+            border-radius: 0 6px 6px 0;
+            background: inherit;
+            opacity: 0.8;
         }
         .car-wheel {
             position: absolute;
-            width: 12px;
-            height: 12px;
+            width: 14px;
+            height: 14px;
+            background: #0f0f0f;
+            border-radius: 50%;
+            border: 2.5px solid #2a2a2a;
+            box-shadow: inset 0 0 4px rgba(255,255,255,0.05);
+        }
+        .car-wheel-front { left: 4%; bottom: -2px; }
+        .car-wheel-back { right: 14%; bottom: -2px; }
+        .car-wheel-inner {
+            position: absolute;
+            width: 7px;
+            height: 7px;
             background: #1a1a1a;
             border-radius: 50%;
-            border: 2px solid #333;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 1.5px solid #333;
         }
-        .car-wheel-front { left: 5%; bottom: -1px; }
-        .car-wheel-back { right: 12%; bottom: -1px; }
+        .car-wheel-rim {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: #444;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .car-front-wing {
+            position: absolute;
+            width: 20%;
+            height: 25%;
+            bottom: 8%;
+            left: -5%;
+            background: inherit;
+            opacity: 0.85;
+            clip-path: polygon(0% 100%, 100% 100%, 95% 0%, 5% 0%);
+        }
+        .car-front-wing-endplate {
+            position: absolute;
+            width: 25%;
+            height: 100%;
+            right: 0;
+            top: 0;
+            background: inherit;
+            opacity: 0.9;
+        }
+        .car-floor-edge {
+            position: absolute;
+            width: 100%;
+            height: 3px;
+            bottom: 0;
+            background: rgba(0,0,0,0.3);
+            border-radius: 0 0 2px 2px;
+        }
         .car-number {
             position: absolute;
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             font-weight: 900;
             color: white;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
-            top: 55%;
-            left: 60%;
+            text-shadow: 1.5px 1.5px 3px rgba(0,0,0,0.9);
+            top: 52%;
+            left: 58%;
             transform: translate(-50%, -50%);
             font-family: 'Arial Black', sans-serif;
         }
-        .mercedes .car-body { background: linear-gradient(90deg, #c0c0c0, #1a1a1a); }
-        .mercedes .car-nose { background: #c0c0c0; }
-        .mercedes .car-rear { background: #1a1a1a; }
-        .ferrari .car-body, .ferrari .car-nose, .ferrari .car-rear { background: #dc2626; }
-        .redbull .car-body, .redbull .car-nose { background: #2563eb; }
-        .redbull .car-rear { background: #1e3a5f; }
-        .mclaren .car-body, .mclaren .car-nose { background: #ff6b35; }
-        .mclaren .car-rear { background: #1a1a1a; }
-        .aston .car-body, .aston .car-nose, .aston .car-rear { background: #006f62; }
-        .alpine .car-body, .alpine .car-nose { background: #0090ff; }
-        .alpine .car-rear { background: #0066cc; }
-        .williams .car-body, .williams .car-nose { background: linear-gradient(90deg, #3b82f6, #ffffff); }
-        .williams .car-rear { background: #005aff; }
-        .rb .car-body, .rb .car-nose { background: #ffffff; }
-        .rb .car-rear { background: #6692ff; }
-        .haas .car-body, .haas .car-nose { background: #f5f5f5; }
-        .haas .car-rear { background: #dc2626; }
-        .audi .car-body, .audi .car-nose { background: #c0c0c0; }
-        .audi .car-rear { background: #dc2626; }
-        .cadillac .car-body { background: linear-gradient(90deg, #f5f5f5, #1a1a1a); }
-        .cadillac .car-nose { background: #f5f5f5; }
-        .cadillac .car-rear { background: #1a1a1a; }
+        .car-number-outline {
+            position: absolute;
+            font-size: 0.75rem;
+            font-weight: 900;
+            color: rgba(0,0,0,0.5);
+            top: 52%;
+            left: 58%;
+            transform: translate(-50%, -50%);
+            font-family: 'Arial Black', sans-serif;
+            filter: blur(1px);
+        }
+        .mercedes .car-body, .mercedes .car-rear { background: linear-gradient(180deg, #c0c0c0 0%, #a8a8a8 30%, #1a1a1a 70%, #0f0f0f 100%); }
+        .mercedes .car-nose { background: linear-gradient(180deg, #e0e0e0, #c0c0c0); }
+        .mercedes .car-sidepod { background: linear-gradient(90deg, #1a1a1a, #00d4be 30%, #00e5c7 50%, #00d4be 70%, #1a1a1a); }
+        .mercedes .car-front-wing { background: linear-gradient(180deg, #c0c0c0, #a8a8a8); }
+        .mercedes .car-cockpit { background: linear-gradient(135deg, #1e3a5f, #0f2744); }
+        .ferrari .car-body, .ferrari .car-nose, .ferrari .car-front-wing { background: linear-gradient(135deg, #ff1e1e 0%, #dc2626 40%, #b91c1c 100%); }
+        .ferrari .car-sidepod { background: linear-gradient(90deg, #dc2626 0%, #ffffff 40%, #ffffff 60%, #dc2626 100%); }
+        .ferrari .car-rear { background: linear-gradient(135deg, #dc2626, #b91c1c); }
+        .ferrari .car-cockpit { background: linear-gradient(135deg, #2d2d44, #1a1a2e); }
+        .redbull .car-body, .redbull .car-nose, .redbull .car-front-wing { background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 40%, #2563eb 70%, #1e3a5f 100%); }
+        .redbull .car-sidepod { background: linear-gradient(90deg, #1e3a5f 0%, #2563eb 20%, #ffd700 45%, #fbbf24 50%, #ffd700 55%, #2563eb 80%, #1e3a5f 100%); }
+        .redbull .car-rear { background: linear-gradient(135deg, #1e3a5f, #0f172a); }
+        .redbull .car-cockpit { background: linear-gradient(135deg, #1e3a5f, #0f2744); }
+        .mclaren .car-body, .mclaren .car-nose, .mclaren .car-front-wing { background: linear-gradient(135deg, #ff6b35 0%, #ff8700 40%, #fbbf24 70%, #ff8700 100%); }
+        .mclaren .car-sidepod { background: linear-gradient(90deg, #ff6b35 0%, #1a1a1a 40%, #1a1a1a 60%, #ff6b35 100%); }
+        .mclaren .car-rear { background: linear-gradient(135deg, #1a1a1a, #0f0f0f); }
+        .mclaren .car-cockpit { background: linear-gradient(135deg, #1e3a5f, #0f2744); }
+        .aston .car-body, .aston .car-nose, .aston .car-sidepod, .aston .car-rear, .aston .car-front-wing { background: linear-gradient(135deg, #004d40 0%, #006f62 40%, #00897b 60%, #006f62 100%); }
+        .aston .car-cockpit { background: linear-gradient(135deg, #1e3a5f, #0f2744); }
+        .alpine .car-body, .alpine .car-nose, .alpine .car-front-wing { background: linear-gradient(135deg, #0066cc 0%, #0090ff 40%, #ff69b4 70%, #0090ff 100%); }
+        .alpine .car-sidepod { background: linear-gradient(90deg, #0090ff, #0066cc 50%, #0090ff); }
+        .alpine .car-rear { background: linear-gradient(135deg, #0066cc, #004499); }
+        .alpine .car-cockpit { background: linear-gradient(135deg, #1e3a5f, #0f2744); }
+        .williams .car-body, .williams .car-nose, .williams .car-front-wing { background: linear-gradient(135deg, #005aff 0%, #3b82f6 30%, #60a5fa 50%, #ffffff 100%); }
+        .williams .car-sidepod { background: linear-gradient(90deg, #3b82f6, #60a5fa 40%, #3b82f6); }
+        .williams .car-rear { background: linear-gradient(135deg, #005aff, #003399); }
+        .williams .car-cockpit { background: linear-gradient(135deg, #1e3a5f, #0f2744); }
+        .rb .car-body, .rb .car-nose, .rb .car-front-wing { background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 30%, #e0e0e0 100%); }
+        .rb .car-sidepod { background: linear-gradient(90deg, #ffffff, #6692ff 30%, #8b5cf6 50%, #6692ff 70%, #ffffff); }
+        .rb .car-rear { background: linear-gradient(135deg, #6692ff, #2b4562); }
+        .rb .car-cockpit { background: linear-gradient(135deg, #1e3a5f, #0f2744); }
+        .haas .car-body, .haas .car-nose, .haas .car-front-wing { background: linear-gradient(135deg, #ffffff 0%, #f5f5f5 50%, #e8e8e8 100%); }
+        .haas .car-sidepod { background: linear-gradient(90deg, #f5f5f5, #333333 45%, #333333 55%, #f5f5f5); }
+        .haas .car-rear { background: linear-gradient(135deg, #dc2626, #b91c1c); }
+        .haas .car-cockpit { background: linear-gradient(135deg, #2d2d2d, #1a1a1a); }
+        .audi .car-body, .audi .car-nose, .audi .car-front-wing { background: linear-gradient(135deg, #c0c0c0 0%, #e0e0e0 40%, #c0c0c0 100%); }
+        .audi .car-sidepod { background: linear-gradient(90deg, #c0c0c0 0%, #dc2626 45%, #dc2626 55%, #c0c0c0 100%); }
+        .audi .car-rear { background: linear-gradient(135deg, #dc2626, #991b1b); }
+        .audi .car-cockpit { background: linear-gradient(135deg, #2d2d2d, #1a1a1a); }
+        .cadillac .car-body, .cadillac .car-front-wing { background: linear-gradient(90deg, #f5f5f5 0%, #e8e8e8 50%, #1a1a1a 100%); }
+        .cadillac .car-nose { background: linear-gradient(135deg, #f5f5f5, #e8e8e8); }
+        .cadillac .car-sidepod { background: linear-gradient(90deg, #e8e8e8 0%, #ffffff 50%, #1a1a1a 100%); }
+        .cadillac .car-rear { background: linear-gradient(135deg, #1a1a1a, #0f0f0f); }
+        .cadillac .car-cockpit { background: linear-gradient(135deg, #2d2d2d, #1a1a1a); }
         .hud {
             position: fixed;
             top: 75px;
@@ -301,7 +434,15 @@
             .car-wheel { width: 8px; height: 8px; }
             .car-wheel-front { bottom: -0.5px; }
             .car-wheel-back { bottom: -0.5px; }
+            .car-wheel-inner { width: 4px; height: 4px; }
+            .car-wheel-rim { width: 2px; height: 2px; }
             .car-number { font-size: 0.5rem; }
+            .car-number-outline { font-size: 0.5rem; }
+            .car-nose { width: 15%; left: -3%; }
+            .car-cockpit { width: 30%; }
+            .car-sidepod { width: 40%; }
+            .car-rear { width: 25%; right: -8%; }
+            .car-front-wing { width: 15%; }
             .hud { top: 65px; right: 10px; }
             .hud-box { padding: 6px 10px; }
             .hud-label { font-size: 0.5rem; }
@@ -456,18 +597,39 @@
             const container = document.getElementById('carsContainer');
             container.innerHTML = '';
             cars = [];
-            raceState.carProgress = [];
 
             drivers.forEach((driver, idx) => {
                 const carEl = document.createElement('div');
                 carEl.className = `car ${driver.carClass}`;
                 carEl.innerHTML = `
                     <div class="car-body">
-                        <div class="car-nose"></div>
-                        <div class="car-cockpit"></div>
-                        <div class="car-rear"></div>
-                        <div class="car-wheel car-wheel-front"></div>
-                        <div class="car-wheel car-wheel-back"></div>
+                        <div class="car-nose">
+                            <div class="car-nose-tip"></div>
+                        </div>
+                        <div class="car-cockpit">
+                            <div class="car-cockpit-glass"></div>
+                        </div>
+                        <div class="car-sidepod">
+                            <div class="car-sidepod-detail"></div>
+                        </div>
+                        <div class="car-rear">
+                            <div class="car-rear-wing-endplate"></div>
+                        </div>
+                        <div class="car-front-wing">
+                            <div class="car-front-wing-endplate"></div>
+                        </div>
+                        <div class="car-wheel car-wheel-front">
+                            <div class="car-wheel-inner">
+                                <div class="car-wheel-rim"></div>
+                            </div>
+                        </div>
+                        <div class="car-wheel car-wheel-back">
+                            <div class="car-wheel-inner">
+                                <div class="car-wheel-rim"></div>
+                            </div>
+                        </div>
+                        <div class="car-floor-edge"></div>
+                        <div class="car-number-outline">${driver.number}</div>
                         <div class="car-number">${driver.number}</div>
                     </div>
                 `;
@@ -490,9 +652,6 @@
             const offsetX = (containerRect.width - rect.width) / 2;
             const offsetY = (containerRect.height - rect.height) / 2;
 
-            const carWidth = window.innerWidth <= 768 ? 28 : 45;
-            const carHeight = window.innerWidth <= 768 ? 11 : 18;
-
             cars.forEach((car, idx) => {
                 if (car.driver.status === 'dns') {
                     car.element.style.display = 'none';
@@ -500,9 +659,9 @@
                 }
 
                 const progress = raceState.carProgress[idx];
-                const pathIdx = Math.min(Math.floor((progress % 100) / (100 / (trackPath.length - 1))), trackPath.length - 2);
-                const nextIdx = Math.min(pathIdx + 1, trackPath.length - 1);
-                const t = ((progress % 100) / (100 / (trackPath.length - 1))) % 1;
+                const pathIdx = Math.floor(progress % 100 / 100 * (trackPath.length - 1));
+                const nextIdx = (pathIdx + 1) % trackPath.length;
+                const t = (progress % 100 / 100 * (trackPath.length - 1)) % 1;
 
                 const p1 = trackPath[pathIdx];
                 const p2 = trackPath[nextIdx];
@@ -511,31 +670,29 @@
                 const y = p1.y + (p2.y - p1.y) * t;
                 const angle = Math.atan2(p2.y - p1.y, p2.x - p1.x) * 180 / Math.PI;
 
-                car.element.style.left = `${offsetX + x * scaleX - carWidth / 2}px`;
-                car.element.style.top = `${offsetY + y * scaleY - carHeight / 2}px`;
+                car.element.style.left = `${offsetX + x * scaleX - 22}px`;
+                car.element.style.top = `${offsetY + y * scaleY - 9}px`;
                 car.element.style.transform = `rotate(${angle}deg)`;
                 car.element.style.opacity = car.driver.status === 'dnf' ? '0.3' : '1';
-                car.element.style.width = `${carWidth}px`;
-                car.element.style.height = `${carHeight}px`;
             });
         }
 
         function updateStandings() {
-            const racingDrivers = drivers.filter(d => d.status === 'racing');
-            
-            const sorted = racingDrivers.map((driver) => {
-                const idx = drivers.indexOf(driver);
-                const lap = Math.floor(raceState.carProgress[idx] / 100);
-                const position = raceState.carProgress[idx] % 100;
-                return { ...driver, idx, lap, position };
-            }).sort((a, b) => {
-                if (b.lap !== a.lap) return b.lap - a.lap;
-                return b.position - a.position;
+            const racing = drivers.filter(d => d.status === 'racing').map((d, i) => ({ ...d, actualPos: i + 1 }));
+            const dnf = drivers.filter(d => d.status === 'dnf');
+            const dns = drivers.filter(d => d.status === 'dns');
+
+            const sorted = [...racing].sort((a, b) => {
+                const lapA = Math.floor(raceState.carProgress[drivers.indexOf(a)] / 100);
+                const lapB = Math.floor(raceState.carProgress[drivers.indexOf(b)] / 100);
+                if (lapB !== lapA) return lapB - lapA;
+                return (raceState.carProgress[drivers.indexOf(b)] % 100) - (raceState.carProgress[drivers.indexOf(a)] % 100);
             });
 
             let html = '';
             sorted.forEach((driver, idx) => {
-                const currentLap = Math.floor(raceState.carProgress[driver.idx] / 100) + 1;
+                const carIdx = drivers.indexOf(driver);
+                const lap = Math.floor(raceState.carProgress[carIdx] / 100) + 1;
                 const pClass = idx < 3 ? `p${idx + 1}` : '';
                 html += `
                     <div class="driver-item ${pClass}">
@@ -544,15 +701,14 @@
                             <div class="driver-name">${driver.name}</div>
                             <div class="driver-team">${driver.team}</div>
                         </div>
-                        <div class="driver-lap">L${Math.min(currentLap, raceState.maxLaps)}</div>
+                        <div class="driver-lap">L${Math.min(lap, raceState.maxLaps)}</div>
                     </div>
                 `;
             });
 
-            const dnfDrivers = drivers.filter(d => d.status === 'dnf');
-            dnfDrivers.forEach(driver => {
-                const idx = drivers.indexOf(driver);
-                const lap = Math.floor(raceState.carProgress[idx] / 100) + 1;
+            dnf.forEach(driver => {
+                const carIdx = drivers.indexOf(driver);
+                const lap = Math.floor(raceState.carProgress[carIdx] / 100) + 1;
                 html += `
                     <div class="driver-item dnf">
                         <div class="pos">DNF</div>
@@ -565,8 +721,7 @@
                 `;
             });
 
-            const dnsDrivers = drivers.filter(d => d.status === 'dns');
-            dnsDrivers.forEach(driver => {
+            dns.forEach(driver => {
                 html += `
                     <div class="driver-item dnf">
                         <div class="pos">DNS</div>
@@ -590,26 +745,21 @@
             const secs = Math.floor(raceState.time % 60).toString().padStart(2, '0');
             document.getElementById('hudTime').textContent = `${mins}:${secs}`;
 
-            const racingDrivers = drivers.filter(d => d.status === 'racing');
-            if (racingDrivers.length > 0) {
-                const sorted = racingDrivers.map((driver) => {
-                    const idx = drivers.indexOf(driver);
-                    const lap = Math.floor(raceState.carProgress[idx] / 100);
-                    const position = raceState.carProgress[idx] % 100;
-                    return { ...driver, idx, lap, position };
-                }).sort((a, b) => {
-                    if (b.lap !== a.lap) return b.lap - a.lap;
-                    return b.position - a.position;
+            const sorted = drivers.filter(d => d.status === 'racing').map((d, i) => ({ ...d, idx: drivers.indexOf(d) }))
+                .sort((a, b) => {
+                    const lapA = Math.floor(raceState.carProgress[a.idx] / 100);
+                    const lapB = Math.floor(raceState.carProgress[b.idx] / 100);
+                    if (lapB !== lapA) return lapB - lapA;
+                    return (raceState.carProgress[b.idx] % 100) - (raceState.carProgress[a.idx] % 100);
                 });
 
-                if (sorted.length > 0) {
-                    const leader = sorted[0];
-                    document.getElementById('leaderStat').textContent = leader.name.split(' ')[1];
+            if (sorted.length > 0) {
+                const leader = sorted[0];
+                document.getElementById('leaderStat').textContent = leader.name.split(' ')[1];
 
-                    if (sorted.length > 1) {
-                        const diff = ((sorted[0].position - sorted[1].position + 100) % 100) / 100 * 5.3;
-                        document.getElementById('gapStat').textContent = `+${diff.toFixed(3)}s`;
-                    }
+                if (sorted.length > 1) {
+                    const diff = ((raceState.carProgress[sorted[0].idx] - raceState.carProgress[sorted[1].idx]) % 100) / 100 * 5.3;
+                    document.getElementById('gapStat').textContent = `+${diff.toFixed(3)}s`;
                 }
             }
 
@@ -631,23 +781,15 @@
                     drivers.forEach((driver, idx) => {
                         if (driver.status !== 'racing') return;
 
-                        const progress = raceState.carProgress[idx] || 0;
-                        const pathIdx = Math.min(Math.floor((progress % 100) / (100 / (trackPath.length - 1))), trackPath.length - 2);
+                        const progress = raceState.carProgress[idx];
+                        const pathIdx = Math.floor(progress % 100 / 100 * (trackPath.length - 1));
                         const baseSpeed = trackPath[pathIdx].speed;
 
                         const speedFactor = driver.speed * (baseSpeed / 300) * 0.45;
-                        const newProgress = progress + speedFactor * (0.98 + Math.random() * 0.04);
+                        raceState.carProgress[idx] += speedFactor * (0.98 + Math.random() * 0.04);
 
-                        raceState.carProgress[idx] = newProgress;
-
-                        if (idx > 0 && drivers[idx - 1].status === 'racing') {
-                            const prevProgress = raceState.carProgress[idx - 1];
-                            if (newProgress >= prevProgress - 2) {
-                                raceState.carProgress[idx] = Math.min(raceState.carProgress[idx], prevProgress - 2);
-                            }
-                        }
-
-                        if (newProgress >= 100 && Math.floor(newProgress / 100) > Math.floor(progress / 100)) {
+                        if (raceState.carProgress[idx] >= 100) {
+                            raceState.carProgress[idx] -= 100;
                             if (idx === 0) {
                                 raceState.currentLap++;
                                 if (raceState.currentLap > raceState.maxLaps) {
@@ -671,18 +813,16 @@
 
         function endRace() {
             raceState.running = false;
-            if (raceInterval) clearInterval(raceInterval);
+            clearInterval(raceInterval);
 
-            const racingDrivers = drivers.filter(d => d.status === 'racing');
-            const sorted = racingDrivers.map((driver) => {
-                const idx = drivers.indexOf(driver);
-                const lap = Math.floor(raceState.carProgress[idx] / 100);
-                const position = raceState.carProgress[idx] % 100;
-                return { ...driver, idx, lap, position };
-            }).sort((a, b) => {
-                if (b.lap !== a.lap) return b.lap - a.lap;
-                return b.position - a.position;
-            });
+            const sorted = drivers.filter(d => d.status === 'racing')
+                .map((d, i) => ({ ...d, idx: drivers.indexOf(d) }))
+                .sort((a, b) => {
+                    const lapA = Math.floor(raceState.carProgress[a.idx] / 100);
+                    const lapB = Math.floor(raceState.carProgress[b.idx] / 100);
+                    if (lapB !== lapA) return lapB - lapA;
+                    return (raceState.carProgress[b.idx] % 100) - (raceState.carProgress[a.idx] % 100);
+                });
 
             if (sorted.length > 0) {
                 const winner = sorted[0];
@@ -697,7 +837,6 @@
             raceState.paused = false;
             raceState.currentLap = 1;
             raceState.time = 0;
-            raceState.carProgress = [];
             fastestLap = null;
 
             if (raceInterval) clearInterval(raceInterval);
